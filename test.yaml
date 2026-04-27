@@ -1,0 +1,30 @@
+name: Deploy Frontend and Backend via Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-services:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Stop and Remove Existing Containers
+        run: |
+          docker compose down --remove-orphans
+
+      - name: Deploy with Docker Compose
+        run: |
+          docker compose up --build -d
+
+      - name: Clean up unused Docker images
+        run: |
+          docker image prune -f
+
+      - name: Verify Running Services
+        run: |
+          docker compose ps
+
